@@ -18,6 +18,7 @@
     <ItemGroup>
         <PackageReference Include="Aspire.Hosting.AppHost" Version="9.4.1"/>
         <PackageReference Include="Aspire.Hosting.Redis" Version="9.4.1"/>
+        <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.4.1"/>
         <PackageReference Include="CommunityToolkit.Aspire.Hosting.Dapr" Version="9.7.0" />
         <PackageReference Include="CommunityToolkit.Aspire.Hosting.Redis.Extensions" Version="9.7.0" />
         <PackageReference Include="Dapr.AspNetCore" Version="1.15.4" />
