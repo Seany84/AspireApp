@@ -39,7 +39,7 @@ app.MapGet("/orders/{id:int}", async (int id, [FromServices] DaprClient dapr) =>
 app.MapPost("/publish", async ([FromServices] DaprClient dapr) =>
 {
     var order = new Order{ Id = 123, Price = 12, Sku = "MY-SKU" };
-    await dapr.PublishEventAsync("pubsub", "orders.created", order);
+    await dapr.PublishEventAsync("pubsub-rabbit", "orders.created", order);
     return Results.Ok("published");
 });
 

@@ -54,7 +54,7 @@ app.MapGet("/weatherforecast", () =>
 app.MapPost("/orderscreated", ([FromBody] Order order) =>
 {
     return Results.Ok($"{order.Id} {order.Sku} processed!");
-}).WithTopic("pubsub", "orders.created");
+}).WithTopic("pubsub-rabbit", "orders.created");
 
 app.MapGet("/orders/{id:int}", (int id) =>
     new Order { Id = id, Price = 12, Sku = "MY-SKU" });

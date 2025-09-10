@@ -8,28 +8,33 @@ var cache = builder.AddRedis("cache").WithDbGate();
 
 var daprState = builder.AddDaprStateStore("statestore");
 
-DaprSidecarOptions sideCarOptions = new DaprSidecarOptions
+var sideCarOptions = new DaprSidecarOptions
 {
     EnableAppHealthCheck = true,
     AppHealthCheckPath = "/health",
+    //ResourcesPaths = [Path.Combine("..", "components")]
 };
 
+IResourceBuilder<IDaprComponentResource> daprPubSubBuilder = null;
 IResourceBuilder<RabbitMQServerResource>? rabbitmq = null;
 var pubSubType = "pubsub.azure.servicebus";
 
 if (builder.Environment.IsDevelopment())
 {
+    const int rabbitPort = 5555;
     var username = builder.AddParameterFromConfiguration("rabbitmq-username", "guest", true);
     var password = builder.AddParameterFromConfiguration("rabbitmq-password", "guest", true);
-    rabbitmq = builder.AddRabbitMQ("rabbitmq", username, password)
+    rabbitmq = builder.AddRabbitMQ("rabbitmq", username, password, rabbitPort)
+        //.WithEndpoint(targetPort: rabbitPort)
         .WithManagementPlugin();
 
     pubSubType = "pubsub.rabbitmq";
+
+    daprPubSubBuilder = builder
+        .AddDaprPubSub("pubsub-rabbit")
+        .WithMetadata("connectionString", $"amqp://localhost:{rabbitPort}")
+        .WaitFor(rabbitmq);
 }
-var daprPubSubBuilder = builder.AddDaprComponent("pubsub", pubSubType, new DaprComponentOptions
-{
-    LocalPath = Path.Combine("..", "dapr", "components")
-});
 
 var apiService = builder.AddProject<Projects.AspireApps_ApiService>("apiservice")
     .WithHttpHealthCheck("/health")
